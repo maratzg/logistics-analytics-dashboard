@@ -167,6 +167,17 @@ class PhaseBV2SchemaTests(unittest.TestCase):
         result = cancellations_by_week(cleaned)
         self.assertEqual(result.to_dict("records"), [{"Week": "8", "Cancelled rows": 2}])
 
+    def test_visual_total_footer_is_not_an_invalid_operational_week(self) -> None:
+        footer = {column: None for column in EXPECTED_WEEKLY_COLUMNS}
+        footer.update({"Week": "Total", "Summary": 3, "TEU": 4, "TS": 5})
+        result = clean_weekly(pd.DataFrame([footer, weekly_row(Week="Total")]))
+
+        self.assertTrue(pd.isna(result.dataframe.iloc[0]["Week"]))
+        self.assertFalse(bool(result.dataframe.iloc[0]["_is_operational"]))
+        self.assertEqual(result.dataframe.iloc[0]["_workbook_Summary"], 3)
+        invalid_week = [issue for issue in result.issues if "Invalid numeric value in Week" in issue.message]
+        self.assertEqual(len(invalid_week), 1)
+
 
 class PhaseBCalculationTests(unittest.TestCase):
     def test_load_status_and_all_split_metrics_are_calculated_centrally(self) -> None:

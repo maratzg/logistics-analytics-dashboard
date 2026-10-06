@@ -4,7 +4,7 @@ A desktop analytics application designed around a real operational logistics wor
 
 The project extends an existing Excel-based workflow with a Python analytics layer. Excel remains the operational source of truth, while the Python application reads the workbook without modifying it and provides dedicated interfaces for analysis, historical exploration, comparison, validation, and reporting.
 
-> **Portfolio version:** Production workbooks and operational data are intentionally excluded from this repository. Tests and examples use synthetic data only.
+> **Portfolio version:** Production workbooks and operational data are intentionally excluded. The included demo workbook and all tests use synthetic data only.
 
 ---
 
@@ -147,6 +147,21 @@ The application provides:
 ## Workbook Model
 
 The application is designed around structured workbook sheets including:
+
+### Included demo workbook
+
+[`demo/logistics_operations_demo.xlsm`](demo/logistics_operations_demo.xlsm) is a sanitized, macro-enabled workbook for portfolio review and hands-on testing. It contains 22 synthetic operational records across three weekly blocks and 35 synthetic history events, including active and cancelled shipments, loaded and empty equipment, multiple vessels, voyages, customers, and one relocation-aware RowID scenario.
+
+The demo retains the workbook structure required by the application:
+
+- the 45-column `WEEKLY` operational schema;
+- `LOG_HISTORY`, `MASTER_DATA`, `REPORT`, `TEMPLATE`, and `README` sheets;
+- the original workbook formulas, formatting, validations, tables, controls, and VBA project;
+- synthetic formula caches for non-Excel readers, with full recalculation requested when Excel opens the file.
+
+Production data, personal metadata, custom document properties, SharePoint metadata, printer paths, external links, queries, connections, and credentials are not included.
+
+To try the demo, install the dependencies and launch the application normally. On first run, choose `demo/logistics_operations_demo.xlsm` when prompted for a workbook. The selection is stored in the user-specific configuration, not committed to the repository.
 
 ### `WEEKLY`
 
@@ -472,7 +487,7 @@ The Python application treats it as **read-only input** and does not:
 
 Workbook integrity is covered by integration testing.
 
-The original operational workbook can contain VBA automation for the Excel-side workflow. That workbook, its VBA implementation, and production operational data are **not included in this public repository**.
+The original production workbook and production operational data are **not included in this public repository**. The included demo workbook preserves the Excel-side VBA workflow using synthetic data so reviewers can inspect the end-to-end architecture.
 
 The Python application is designed to understand the identity and history model produced by that workflow without modifying it.
 
@@ -511,6 +526,8 @@ logistics-analytics-dashboard/
 ├── check_environment.py
 ├── requirements.txt
 ├── config.example.json
+├── demo/
+│   └── logistics_operations_demo.xlsm
 │
 ├── src/
 │   ├── analytics modules
@@ -536,7 +553,7 @@ logistics-analytics-dashboard/
 └── README.md
 ```
 
-Virtual environments, runtime files, production workbooks, local configuration, and operational exports are excluded from version control.
+Virtual environments, runtime files, production workbooks, local configuration, and operational exports are excluded from version control. The sanitized workbook under `demo/` is the sole intentional workbook exception.
 
 ---
 
@@ -632,14 +649,14 @@ Synchronization itself remains the responsibility of OneDrive/SharePoint.
 The current sanitized portfolio build contains:
 
 ```text
-188 tests
-186 passing
-2 expected skips
+189 tests
+188 passing
+1 expected skip
 0 failures
 0 errors
 ```
 
-The two expected skips are environment-dependent tests rather than application failures.
+The expected skip is an opt-in GUI display test rather than an application failure.
 
 The regression suite covers:
 
@@ -745,7 +762,7 @@ It does **not** include:
 - user-specific configuration;
 - private filesystem paths.
 
-Tests use synthetic fixtures.
+Tests and the included demo workbook use synthetic fixtures and portfolio-only entities.
 
 ---
 

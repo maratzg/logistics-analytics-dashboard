@@ -38,6 +38,10 @@ config.json
 
 *.xlsb
 
+# Sanitized synthetic portfolio workbook
+
+!demo/logistics_operations_demo.xlsm
+
 # Runtime/generated files
 
 logs/

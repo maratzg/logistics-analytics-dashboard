@@ -65,6 +65,7 @@ def clean_weekly(df: pd.DataFrame) -> CleanResult:
         cleaned[f"_workbook_{column}"] = cleaned[column].copy()
 
     _normalize_strings(cleaned, STRING_COLUMNS)
+    _clear_structural_total_markers(cleaned)
     _normalize_numeric(cleaned, ["Week", "CNTR AMT", "SIZE", "GWT"], issues)
     _normalize_schedule_dates(cleaned, DATE_COLUMNS, issues)
 
@@ -123,6 +124,28 @@ def _normalize_strings(df: pd.DataFrame, columns: Iterable[str]) -> None:
     for column in columns:
         if column in df.columns:
             df[column] = df[column].map(lambda value: value.strip() if isinstance(value, str) else value)
+
+
+def _clear_structural_total_markers(df: pd.DataFrame) -> None:
+    """Exclude visual block footers from business-field normalization.
+
+    The Excel layout labels each weekly footer as ``Total`` in the Week column.
+    It is structural only when the row has no identifiers and no other editable
+    business input. A real record containing ``Total`` as its Week remains an
+    invalid numeric value and is still reported by validation.
+    """
+
+    if "Week" not in df.columns:
+        return
+    total_marker = df["Week"].astype(str).str.strip().str.casefold().eq("total")
+    structural = total_marker.copy()
+    for column in ["RowID", "BlockID"] + [name for name in WEEKLY_INPUT_COLUMNS if name != "Week"]:
+        if column in df.columns:
+            structural &= ~df[column].map(is_meaningful_value).fillna(False).astype(bool)
+    if "_raw_LoadStatus" in df.columns:
+        structural &= ~df["_raw_LoadStatus"].map(is_meaningful_value).fillna(False).astype(bool)
+    if structural.any():
+        df.loc[structural, "Week"] = pd.NA
 
 
 def _normalize_numeric(df: pd.DataFrame, columns: Iterable[str], issues: list[ValidationIssue]) -> None:
