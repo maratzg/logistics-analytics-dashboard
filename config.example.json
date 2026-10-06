@@ -1,0 +1,6 @@
+{
+  "required_sheets": ["WEEKLY", "LOG_HISTORY"],
+  "optional_sheets": ["TEMPLATE", "MASTER_DATA", "REPORT", "README"],
+  "expected_workbook_filename": "logistics_operations_demo.xlsm",
+  "max_issue_details": 25
+}

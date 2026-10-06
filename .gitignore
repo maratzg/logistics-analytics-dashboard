@@ -1,0 +1,67 @@
+# macOS
+
+.DS_Store
+
+# Python
+
+__pycache__/
+
+*.py[cod]
+
+*.pyo
+
+# Virtual environments
+
+.venv/
+
+venv/
+
+env/
+
+# Local configuration
+
+config.json
+
+.env
+
+.env.*
+
+!.env.example
+
+# Real Excel workbooks and operational data
+
+*.xls
+
+*.xlsx
+
+*.xlsm
+
+*.xlsb
+
+# Runtime/generated files
+
+logs/
+
+output/
+
+exports/
+
+*.log
+
+# IDE
+
+.vscode/
+
+.idea/
+
+# Temporary files
+
+*.tmp
+
+*.bak
+
+~$*
+
+# Archives and development snapshots
+
+*.zip
